@@ -25,6 +25,8 @@ Para organizar la aplicación, utilizamos cuatro archivos:
 - **`script.js`**: Controla toda la lógica de la aplicación, como cargar y guardar tareas en `localStorage`.
 - **`tasks.json`**: Este archivo incluye datos de ejemplo de tareas, que podrían integrarse en una futura actualización.
 
+---
+
 ### 2. Creación de la Interfaz de Usuario (index.html)
 
 Este archivo define la estructura básica de la aplicación y permite al usuario interactuar con la lista de tareas. Incluye un formulario que permite añadir tareas y una lista que muestra todas las tareas almacenadas.
@@ -48,6 +50,9 @@ Este archivo define la estructura básica de la aplicación y permite al usuario
     <script src="script.js"></script>
 </body>
 </html>
+```
+
+---
 
 ### 3. Estilo Visual de la Aplicación (style.css)
 
@@ -81,7 +86,9 @@ li {
     margin: 5px;
     padding: 10px;
 }
+```
 
+---
 
 ### 4. Lógica de la Aplicación (script.js)
 
@@ -121,6 +128,9 @@ function saveTask(task) {
     tasks.push(task);
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
+```
+
+---
 
 ### 5. Archivo JSON con Datos Iniciales (tasks.json)
 
@@ -132,6 +142,9 @@ Este archivo contiene datos de ejemplo que podrían utilizarse para poblar la li
     "Leer un libro de ciencia ficción",
     "Hacer ejercicio"
 ]
+```
+
+---
 
 ### Explicación del Uso de localStorage
 
@@ -146,15 +159,16 @@ En lugar de una base de datos de servidor, esta aplicación utiliza `localStorag
 2. **Agregar Nuevas Tareas**: `saveTask()` guarda cada tarea nueva en `localStorage`.
 3. **Sesiones Persistentes**: Las tareas se mantienen entre sesiones, siempre que el usuario no borre los datos de su navegador.
 
+---
+
 ### Ventajas del Uso de localStorage
 
 1. **Fácil de Implementar**: No requiere configuraciones adicionales, por lo que es ideal para aplicaciones pequeñas.
 2. **Persistencia entre Sesiones**: Las tareas se mantienen en `localStorage` entre sesiones, lo cual es útil para datos no sensibles.
 3. **Rendimiento Rápido**: `localStorage` funciona directamente en el navegador, eliminando la necesidad de llamadas a un servidor y mejorando la velocidad.
 
+---
+
 ### Conclusión
 
 Este artículo ha demostrado cómo crear una aplicación de lista de tareas sin depender de bases de datos de servidor. `localStorage` ofrece una solución sencilla para almacenar y recuperar datos, lo que convierte esta aplicación en una excelente opción para prototipos y aplicaciones pequeñas.
-
-
-
