@@ -198,12 +198,8 @@ document.addEventListener("DOMContentLoaded", loadTasks);
 
 Creating this To-Do List application with Firestore allowed me to explore a NoSQL cloud database that is excellent for storing and synchronizing data in real-time. Thanks to Firestore, I can avoid setting up an SQL server and simplify the development process, which is ideal for collaborative or lightweight applications.
 
-**GitHub Code Link**: [GitHub Repository](https://github.com/your-username/my-firestore-project)
+**Link en Dev.To**: https://dev.to/ronal_daniellupacamaman/creating-an-application-with-firestore-a-nosql-alternative-from-google-b48
 
 **References**  
 - Google Developers. (n.d.). *Firebase Firestore Documentation*. Firebase.  
 - Firebase. (n.d.). *Firestore Introduction*. Google Cloud Platform.  
-
----
-
-This article shows how to use Firestore to develop a web application that synchronizes data in real-time, without the maintenance and scalability challenges of an SQL database.
