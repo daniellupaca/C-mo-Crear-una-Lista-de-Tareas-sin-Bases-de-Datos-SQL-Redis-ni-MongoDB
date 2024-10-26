@@ -1,62 +1,93 @@
-# Como Crear una Lista de Tareas sin Bases de Datos SQL Redis ni MongoDB
 
-### Introducción
-Desarrollar aplicaciones web suele implicar el uso de bases de datos para almacenar y gestionar datos. Sin embargo, cuando trabajamos en aplicaciones ligeras, existen alternativas que evitan la necesidad de un servidor de base de datos. Este artículo presenta una manera de crear una aplicación de lista de tareas (*To-Do List*) sin SQL, MongoDB o Redis, aprovechando `localStorage` del navegador para la persistencia de datos y manteniendo la aplicación sencilla y eficiente.
+# Creating an Application with Firestore: A NoSQL Alternative from Google
 
-### Características de la Aplicación
+**Author:** [Ronal Daniel Lupaca Mamani]    
+---
 
-1. **Almacenamiento Local en el Navegador**: 
-   - Esta aplicación utiliza `localStorage` para almacenar y cargar tareas. Al no requerir una base de datos, los datos se guardan directamente en el navegador del usuario, haciendo que esta solución sea adecuada para prototipos y aplicaciones pequeñas.
+### Introduction
 
-2. **Interfaz Intuitiva y Ligera**: 
-   - Diseñada con HTML y CSS, la interfaz es simple pero efectiva. Permite al usuario agregar tareas en segundos y visualizarlas sin complicaciones.
+Today, mobile and web applications increasingly require a database that enables real-time synchronization without the complexity of an SQL server. Google Firestore, a NoSQL cloud database, offers exactly that: real-time storage and scalability without the need to manage servers. In this article, I want to show you how to create a simple To-Do List application using Firestore to perform CRUD operations (Create, Read, Update, and Delete).
 
-3. **Fácil de Mantener y Extender**: 
-   - Con lógica escrita en JavaScript puro, el código es fácil de entender y modificar, haciéndolo ideal para aquellos que buscan aprender sobre desarrollo de aplicaciones sin bases de datos complejas.
+Firestore is ideal for this type of application as it allows data to be stored and synchronized in real-time across multiple devices. Moreover, its integration with Firebase makes it a powerful tool for web and mobile applications.
 
 ---
 
-### 1. Estructura de Archivos
+### What is Firestore?
 
-Para organizar la aplicación, utilizamos cuatro archivos:
+Firestore is part of Google's Firebase platform and is a NoSQL cloud database that allows real-time data storage and synchronization. Firestore organizes data into documents and collections, which is ideal for structured data and allows us to have a serverless database. Some key features include:
 
-- **`index.html`**: Define la estructura visual de la aplicación, con un formulario para añadir tareas y una lista donde se muestran las tareas guardadas.
-- **`style.css`**: Contiene los estilos visuales, creando una apariencia limpia y amigable.
-- **`script.js`**: Controla toda la lógica de la aplicación, como cargar y guardar tareas en `localStorage`.
-- **`tasks.json`**: Este archivo incluye datos de ejemplo de tareas, que podrían integrarse en una futura actualización.
+- **Real-time synchronization:** Data is instantly updated on all connected devices.
+- **Automatic scalability:** It can handle large volumes of data and traffic seamlessly.
+- **Integration with Firebase and Google Cloud Platform:** It is easy to add authentication and permissions.
 
 ---
 
-### 2. Creación de la Interfaz de Usuario (index.html)
+### Project Goal
 
-Este archivo define la estructura básica de la aplicación y permite al usuario interactuar con la lista de tareas. Incluye un formulario que permite añadir tareas y una lista que muestra todas las tareas almacenadas.
+In this project, I want to create a To-Do List application where we can:
+
+- Add new tasks.
+- View all stored tasks.
+- Edit and delete tasks.
+- Automatically synchronize data in real-time.
+
+---
+
+### Project Structure
+
+We organize the application into the following files:
+
+1. **`index.html`**: The application's user interface.
+2. **`style.css`**: The application's styles.
+3. **`app.js`**: The application logic and Firestore connection.
+
+---
+
+### Step 1: Firestore Setup in Firebase
+
+1. **Create a Project in Firebase**:
+   - Log in to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
+
+2. **Enable Firestore**:
+   - In the Firebase console, go to the Firestore Database section and enable it in test mode (for development).
+
+3. **Download the Configuration File**:
+   - In the project settings, select "Add web app" to obtain the configuration file (`firebaseConfig`), necessary to connect the application to Firebase.
+
+---
+
+### Step 2: Create the User Interface (index.html)
+
+In `index.html`, we set up a simple interface with a form to add tasks and a list where stored tasks will be displayed:
 
 ```html
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Tareas sin Base de Datos</title>
+    <title>To-Do List with Firestore</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Lista de Tareas</h1>
+    <h1>To-Do List</h1>
     <form id="taskForm">
-        <input type="text" id="newTask" placeholder="Nueva tarea...">
-        <button type="submit">Agregar</button>
+        <input type="text" id="newTask" placeholder="New task..." required>
+        <button type="submit">Add</button>
     </form>
     <ul id="taskList"></ul>
-    <script src="script.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
 ```
 
 ---
 
-### 3. Estilo Visual de la Aplicación (style.css)
+### Step 3: Application Styles (style.css)
 
-El diseño de la aplicación es simple para garantizar una experiencia clara y fácil de usar. Usamos CSS básico para los elementos de la página y definimos colores y márgenes para hacerla más atractiva visualmente.
+This file provides a simple design for the application:
 
 ```css
 body {
@@ -85,90 +116,94 @@ li {
     background-color: #ececec;
     margin: 5px;
     padding: 10px;
+    display: flex;
+    justify-content: space-between;
 }
 ```
 
 ---
 
-### 4. Lógica de la Aplicación (script.js)
+### Step 4: Application Logic and Firestore Connection (app.js)
 
-Toda la lógica de la aplicación se controla desde este archivo JavaScript, que incluye funciones para cargar las tareas desde `localStorage`, agregar nuevas tareas y mantener los datos actualizados.
-
-- **`loadTasks()`**: Se ejecuta al cargar la página, obtiene las tareas de `localStorage` y las muestra en la lista de tareas.
-- **`saveTask(task)`**: Guarda una nueva tarea en `localStorage`.
-- **Formulario de Tareas**: Captura el evento `submit` para agregar tareas sin recargar la página.
+This file contains the application logic and the CRUD functions that interact with Firestore:
 
 ```javascript
-document.addEventListener('DOMContentLoaded', loadTasks);
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
 
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Function to load all tasks
 function loadTasks() {
-    const taskList = document.getElementById('taskList');
-    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    taskList.innerHTML = '';
-    tasks.forEach(task => {
-        const li = document.createElement('li');
-        li.textContent = task;
-        taskList.appendChild(li);
+    const taskList = document.getElementById("taskList");
+    taskList.innerHTML = "";
+
+    db.collection("tasks").onSnapshot((snapshot) => {
+        snapshot.forEach((doc) => {
+            const task = doc.data().task;
+            const li = document.createElement("li");
+            li.textContent = task;
+            li.appendChild(createDeleteButton(doc.id));
+            taskList.appendChild(li);
+        });
     });
 }
 
-document.getElementById('taskForm').addEventListener('submit', function (e) {
+// Function to add a new task
+document.getElementById("taskForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const newTaskInput = document.getElementById('newTask');
+    const newTaskInput = document.getElementById("newTask");
     const newTask = newTaskInput.value.trim();
+
     if (newTask) {
-        saveTask(newTask);
-        newTaskInput.value = '';
-        loadTasks();
+        await db.collection("tasks").add({ task: newTask });
+        newTaskInput.value = "";
     }
 });
 
-function saveTask(task) {
-    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    tasks.push(task);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+// Function to delete a task
+function createDeleteButton(id) {
+    const btn = document.createElement("button");
+    btn.textContent = "Delete";
+    btn.onclick = async () => {
+        await db.collection("tasks").doc(id).delete();
+    };
+    return btn;
 }
+
+// Load tasks when the application starts
+document.addEventListener("DOMContentLoaded", loadTasks);
 ```
 
 ---
 
-### 5. Archivo JSON con Datos Iniciales (tasks.json)
+### Advantages of Using Firestore
 
-Este archivo contiene datos de ejemplo que podrían utilizarse para poblar la lista de tareas en una versión futura de la aplicación. Aunque no se carga dinámicamente en esta versión, proporciona un ejemplo de cómo se podrían almacenar las tareas inicialmente.
-
-```json
-[
-    "Completar proyecto de la universidad",
-    "Leer un libro de ciencia ficción",
-    "Hacer ejercicio"
-]
-```
+- **Real-time Synchronization**: Firestore allows all connected devices to synchronize data automatically.
+- **Automatic Scalability**: Firestore handles large amounts of data and traffic without manual adjustments.
+- **Built-in Security**: With Firebase Authentication integration, it's easy to apply access rules and protect data.
 
 ---
 
-### Explicación del Uso de localStorage
+### Conclusion
 
-En lugar de una base de datos de servidor, esta aplicación utiliza `localStorage`, una API de almacenamiento en el navegador que permite guardar datos de manera simple y rápida.
+Creating this To-Do List application with Firestore allowed me to explore a NoSQL cloud database that is excellent for storing and synchronizing data in real-time. Thanks to Firestore, I can avoid setting up an SQL server and simplify the development process, which is ideal for collaborative or lightweight applications.
 
-- **Simplicidad**: `localStorage` permite guardar datos en formato JSON directamente en el navegador, evitando la configuración de una base de datos.
-- **Persistencia Local**: Los datos guardados en `localStorage` permanecen disponibles mientras no se borren manualmente los datos del navegador, proporcionando persistencia sin necesidad de conexión al servidor.
+**GitHub Code Link**: [GitHub Repository](https://github.com/your-username/my-firestore-project)
 
-#### En esta aplicación:
-
-1. **Carga de Tareas**: `loadTasks()` recupera las tareas guardadas y las muestra al usuario.
-2. **Agregar Nuevas Tareas**: `saveTask()` guarda cada tarea nueva en `localStorage`.
-3. **Sesiones Persistentes**: Las tareas se mantienen entre sesiones, siempre que el usuario no borre los datos de su navegador.
+**References**  
+- Google Developers. (n.d.). *Firebase Firestore Documentation*. Firebase.  
+- Firebase. (n.d.). *Firestore Introduction*. Google Cloud Platform.  
 
 ---
 
-### Ventajas del Uso de localStorage
-
-1. **Fácil de Implementar**: No requiere configuraciones adicionales, por lo que es ideal para aplicaciones pequeñas.
-2. **Persistencia entre Sesiones**: Las tareas se mantienen en `localStorage` entre sesiones, lo cual es útil para datos no sensibles.
-3. **Rendimiento Rápido**: `localStorage` funciona directamente en el navegador, eliminando la necesidad de llamadas a un servidor y mejorando la velocidad.
-
----
-
-### Conclusión
-
-Este artículo ha demostrado cómo crear una aplicación de lista de tareas sin depender de bases de datos de servidor. `localStorage` ofrece una solución sencilla para almacenar y recuperar datos, lo que convierte esta aplicación en una excelente opción para prototipos y aplicaciones pequeñas.
+This article shows how to use Firestore to develop a web application that synchronizes data in real-time, without the maintenance and scalability challenges of an SQL database.
